@@ -19,7 +19,9 @@ client = OpenAI(
 history = events.read_files("history")
 events.write_files(history,"history_copy")
 messages = history
-K_mes = []
+K_msg = events.read_files("userFiles")
+events.write_files(K_msg,"userFiles_copy")
+
 
 user_input = input("You:")
 messages.append({
@@ -45,7 +47,7 @@ while True:
 
     print(message.content)
 
-    # 没有工具调用，说明 AI 已经可以直接回答
+    # 没有工具调用，说明已经可以直接回答
     if not message.tool_calls:
         if user_input == "exit":
             events.write_files(messages,"history")
@@ -71,7 +73,8 @@ while True:
 
     available_functions = {
         "calculator": tools.calculator,
-        "savefile": tools.savefile
+        "savefile": tools.savefile,
+        "ref_userfile": tools.ref_userfile
     }
 
     # 执行 AI 请求的所有工具

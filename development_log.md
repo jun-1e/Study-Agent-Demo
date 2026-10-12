@@ -1,3 +1,11 @@
+***2026-10-12
+    **修改savefile方法时加入了异常处理，并且将保存结果设置为json格式，但测试保存结果是null
+        *方法中append部分只执行添加操作，返回的是none，所以结果是null
+    **设计了读取userfile的方法，但测试时发生了openai.BadRequestError
+        *func_lists中定义格式错误导致出现异常
+            *出现了索引错误，用字符串索引字符串出现异常，先json.load改变指向内容解决了
+                *主程序开始的readfile方法错误的初始化了userfiles文件，导致内容检测错误，返回KeyError: 'keyword_1'，加入判断条件解决了问题
+    
 ***2026-10-8
     **设计了savefile方法，可以保存用户提供的资料到本地
 

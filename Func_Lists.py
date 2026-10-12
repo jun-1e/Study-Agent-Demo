@@ -37,7 +37,11 @@ functions = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "keyword": {
+                    "keyword_1": {
+                        "type": "string",
+                        "description": "the belonger's keyword of saved messages."
+                    },
+                    "keyword_2":{
                         "type": "string",
                         "description": "the keyword of saved messages."
                     },
@@ -47,8 +51,33 @@ functions = [
                     }
                 },                               
                 "required": [
-                    "keyword",
+                    "keyword_1",
+                    "keyword_2",
                     "message"
+                ]
+            }
+        }
+    },
+    { #读取保存的关键信息
+        "type": "function",
+        "function": {
+            "name": "ref_userfile",
+            "description": "refer to saved userfile to search for detailed user information",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "kword_1": {
+                        "type": "string",
+                        "description": "the belonger of the message you want to search for"
+                    },
+                    "kword_2": {
+                        "type": "string",
+                        "description": "the keyword of the message you want to search for"
+                    }
+                },
+                "required": [
+                    "kword_1",
+                    "kword_2"
                 ]
             }
         }

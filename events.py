@@ -11,10 +11,13 @@ class events:
 
     def read_files(name):
         file_path = str(name)+".json"
-        default_msg = ([{
-                        "role": "system",
-                        "content": "You are a helpful assistant."
-                    }])
+        if name == "history":
+            default_msg = ([{
+                            "role": "system",
+                            "content": "You are a helpful assistant."
+                        }])
+        else:
+            default_msg = []
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 return json.load(f)
