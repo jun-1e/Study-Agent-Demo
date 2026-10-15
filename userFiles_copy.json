@@ -1,0 +1,17 @@
+[
+  {
+    "keyword_1": "john",
+    "keyword_2": "name",
+    "message": "The user's name is John."
+  },
+  {
+    "keyword_1": "john",
+    "keyword_2": "friend",
+    "message": "The user John has a friend named Mark who likes dogs."
+  },
+  {
+    "keyword_1": "john",
+    "keyword_2": "friend",
+    "message": "The user John has a friend named Jenny who likes cats."
+  }
+]

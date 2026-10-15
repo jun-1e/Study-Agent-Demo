@@ -49,3 +49,4 @@ class tools:
                 if (kword_1 == file["keyword_1"] or kword_1 ==file["keyword_2"] 
                 or kword_2 == file["keyword_1"] or kword_2 ==file["keyword_2"]):
                     return file["message"]
+                else: return "No related file saved."
