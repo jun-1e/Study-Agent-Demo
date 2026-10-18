@@ -18,9 +18,10 @@ client = OpenAI(
 
 history = events.read_files("history")
 events.write_files(history,"history_copy")
-messages = history
-K_msg = events.read_files("userFiles")
-events.write_files(K_msg,"userFiles_copy")
+messages = history[-3:]
+print(messages)
+# K_msg = events.read_files("userFiles")
+# events.write_files(K_msg,"userFiles_copy")
 
 
 user_input = input("You:")
@@ -50,24 +51,23 @@ while True:
     # 没有工具调用，说明已经可以直接回答
     if not message.tool_calls:
         if user_input == "exit":
-            events.write_files(messages,"history")
+            for his in messages[3:]:
+                history.append(his)
+            events.write_files(history,"history")
             break
         messages.append({
-            "role": "assistant",
-            "content": message.content
+            "role": "user",
+            "content": user_input
         })
-        user_input = input("You:")        
-        #用户输入exit即退出循环
-        if user_input == "exit":
-            events.write_files(messages,"history")
-            break
-        else:
-            messages.append({
-                        "role": "user",
-                        "content": user_input
-                    }) 
-            continue
+        messages.append({
+            "role": "assistant",
+            "content": message.content,
+            "reasoning_content": message.reasoning_content,
+        })
+        user_input = input("You:")
+        continue        
 
+        
     # 保存 AI 本轮的回答
     events.append_msg(messages,message)
 

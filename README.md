@@ -36,6 +36,7 @@ StudyAgent/
 ## Tech Stack
 - Python
 - DeepSeek API
+- Streamlit
 - Git / Github
 
 
