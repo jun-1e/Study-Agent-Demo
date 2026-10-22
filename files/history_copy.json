@@ -1,0 +1,15 @@
+[
+  {
+    "role": "system",
+    "content": "You are a helpful assistant."
+  },
+  {
+    "role": "user",
+    "content": "hello"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello! How can I help you today?",
+    "reasoning_content": "The user just said \"hello\". I should greet them back and offer assistance."
+  }
+]

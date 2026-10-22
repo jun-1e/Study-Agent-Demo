@@ -20,7 +20,7 @@ class tools:
         pass
 
     def savefile(keyword_1,keyword_2, message):
-        file_path = "userFiles.json"
+        file_path = "files/userFiles.json"
         info = {
             "keyword_1": keyword_1, 
             "keyword_2": keyword_2,
@@ -43,7 +43,7 @@ class tools:
             sys.exit(f"Error: {e}")
 
     def ref_userfile(kword_1,kword_2):
-        with open("userFiles.json","r",encoding="utf-8") as f:
+        with open("fiels/userFiles.json","r",encoding="utf-8") as f:
             files = json.load(f)
             for file in files:
                 if (kword_1 == file["keyword_1"] or kword_1 ==file["keyword_2"] 

@@ -1,0 +1,28 @@
+[
+  {
+    "role": "system",
+    "content": "You are a helpful assistant."
+  },
+  {
+    "role": "user",
+    "content": "hello"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello! How can I help you today?",
+    "reasoning_content": "The user just said \"hello\". I should greet them back and offer assistance."
+  },
+  {
+    "role": "user",
+    "content": "hello how are you today?"
+  },
+  {
+    "role": "user",
+    "content": "hello how are you today?"
+  },
+  {
+    "role": "assistant",
+    "content": "I'm doing well, thank you for asking! I'm ready to help you with whatever you need today. What can I do for you?",
+    "reasoning_content": "The user is greeting me casually. I should respond warmly and offer to help. No tools needed here."
+  }
+]

@@ -1,46 +1,53 @@
 
 import streamlit as st
 
+from main import init_chat, chat
+
+
 st.set_page_config(
     page_title="Study Agent",
     page_icon="🤖",
-    layout="centered"
+    layout="centered",
 )
 
-st.title("Study Agent")
-st.write("你好！这是我的第一个 AI Agent 网页。")
+st.title("🤖 Study Agent")
 
-# 初始化聊天记录
+# 初始化会话状态
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = init_chat()
 
-# 显示已有的聊天记录
+# 显示已有聊天记录
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
+    role = message.get("role")
+
+    if role not in ("user", "assistant"):
+        continue
+
+    content = message.get("content")
+
+    if not content:
+        continue
+
+    with st.chat_message(role):
+        st.markdown(content)
 
 # 接收用户输入
-prompt = st.chat_input("请输入你的问题...")
-
-if prompt:
-    # 保存并显示用户消息
-    st.session_state.messages.append({
-        "role": "user",
-        "content": prompt
-    })
-
+if prompt := st.chat_input("请输入你的问题..."):
+    # 显示本次用户输入
     with st.chat_message("user"):
-        st.write(prompt)
+        st.markdown(prompt)
 
-    # 暂时用固定回复模拟 AI
-    response = f"我收到了你的消息：{prompt}"
-
-    # 保存并显示 AI 回复
-    st.session_state.messages.append({
-        "role": "assistant",
-        "content": response
-    })
-
+    # 调用 Agent
     with st.chat_message("assistant"):
-        st.write(response)
+        with st.spinner("正在思考..."):
+            try:
+                answer, updated_messages = chat(
+                    prompt,
+                    st.session_state.messages,
+                )
 
+                st.session_state.messages = updated_messages
+                st.markdown(answer)
+
+            except Exception as e:
+                st.error(f"运行出错：{e}")

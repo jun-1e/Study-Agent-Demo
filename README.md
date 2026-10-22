@@ -13,6 +13,7 @@ The project is being continuously maintained and developed as a personal softwar
 - feed back tool results
 - JSON-based conversation memory
 - basic error handling
+- simple interactive front-end developed with streamlit
 
 ## ScreenShots
 
@@ -27,8 +28,13 @@ StudyAgent/
 ├──main.py
 ├──README.md
 ├──tools.py
-├──history.json
-└──userFiles.json
+├──app.py
+├──local_talk.py
+└──files
+    ├──history_copy.json
+    ├──history.json
+    ├──userFiles_copy.json
+    └──userFiles.json
 
 ```
 

@@ -1,3 +1,4 @@
+
 import os
 import json
 
@@ -16,84 +17,105 @@ client = OpenAI(
     base_url="http://localhost:8000/v1",
 )
 
-history = events.read_files("history")
-events.write_files(history,"history_copy")
-messages = history[-3:]
-print(messages)
-# K_msg = events.read_files("userFiles")
-# events.write_files(K_msg,"userFiles_copy")
+# AI 可以调用的工具
+available_functions = {
+    "calculator": tools.calculator,
+    "savefile": tools.savefile,
+    "ref_userfile": tools.ref_userfile,
+}
 
 
-user_input = input("You:")
-messages.append({
-    "role": "user",
-    "content": user_input
-})
+def init_chat():
+    """加载历史消息，供 Streamlit 前端初始化会话。"""
+    try:
+        history = events.read_files("history")
 
-while True:
+        # 仅在读取成功后更新备份
+        events.write_files(history, "history_copy")
 
-    response = client.chat.completions.create(
-        model="deepseek-v4-flash",
-        messages=messages,
-        tools=functions,
-        tool_choice="auto",
-        extra_body={
-            "thinking": {
-                "type": "enabled"
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"历史记录读取失败：{e}")
+        raise
+    
+    messages = history[-20:]
+
+    return messages
+
+
+def chat(user_input, messages):
+    """
+    接收前端输入，运行一轮 Agent 对话。
+    返回：(AI 最终回答, 更新后的 messages)
+    """
+    messages = list(messages)
+
+    # 记录本轮开始的位置，方便只保存新增消息
+    start_index = len(messages)
+
+    messages.append({
+        "role": "user",
+        "content": user_input,
+    })
+
+    while True:
+        response = client.chat.completions.create(
+            model="deepseek-v4-flash",
+            messages=messages,
+            tools=functions,
+            tool_choice="auto",
+            extra_body={
+                "thinking": {
+                    "type": "enabled"
+                }
             }
-        }
-    )
-
-    message = response.choices[0].message
-
-    print(message.content)
-
-    # 没有工具调用，说明已经可以直接回答
-    if not message.tool_calls:
-        if user_input == "exit":
-            for his in messages[3:]:
-                history.append(his)
-            events.write_files(history,"history")
-            break
-        messages.append({
-            "role": "user",
-            "content": user_input
-        })
-        messages.append({
-            "role": "assistant",
-            "content": message.content,
-            "reasoning_content": message.reasoning_content,
-        })
-        user_input = input("You:")
-        continue        
-
-        
-    # 保存 AI 本轮的回答
-    events.append_msg(messages,message)
-
-    available_functions = {
-        "calculator": tools.calculator,
-        "savefile": tools.savefile,
-        "ref_userfile": tools.ref_userfile
-    }
-
-    # 执行 AI 请求的所有工具
-    for tool_call in message.tool_calls:
-
-        function_name = tool_call.function.name
-
-        function_to_call = available_functions[function_name]
-
-        function_args = json.loads(
-            tool_call.function.arguments
         )
 
-        function_response = function_to_call(
-            **function_args
-        )
+        message = response.choices[0].message
 
-        messages.append({
-            "role": "tool",
-            "tool_call_id": tool_call.id,
-            "content": str(function_response)
-        })
+        # 没有工具调用，说明本轮回答完成
+        if not message.tool_calls:
+            answer = message.content or ""
+
+            messages.append({
+                "role": "assistant",
+                "content": answer,
+                "reasoning_content": message.reasoning_content,
+            })
+
+            # 将本轮新增的用户消息、工具调用及回答保存到历史文件
+            history = events.read_files("history")
+            history.extend(messages[start_index:])
+            events.write_files(history, "history")
+
+            return answer, messages
+
+        # 保存 AI 的工具调用消息
+        events.append_msg(messages, message)
+
+        # 执行 AI 请求的所有工具
+        for tool_call in message.tool_calls:
+            function_name = tool_call.function.name
+
+            if function_name not in available_functions:
+                function_response = (
+                    f"Error: Unknown tool '{function_name}'"
+                )
+            else:
+                function_to_call = available_functions[function_name]
+
+                try:
+                    function_args = json.loads(
+                        tool_call.function.arguments
+                    )
+
+                    function_response = function_to_call(
+                        **function_args
+                    )
+                except Exception as e:
+                    function_response = f"Tool execution error: {e}"
+
+            messages.append({
+                "role": "tool",
+                "tool_call_id": tool_call.id,
+                "content": str(function_response),
+            })

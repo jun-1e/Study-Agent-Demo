@@ -5,12 +5,12 @@ import os
 class events:
 
     def write_files(data,name):
-        with open(str(name)+".json", "w", encoding="utf-8") as f:
+        with open("files/"+str(name)+".json", "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
 
     def read_files(name):
-        file_path = str(name)+".json"
+        file_path = "files/"+str(name)+".json"
         if name == "history":
             default_msg = ([{
                             "role": "system",
